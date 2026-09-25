@@ -2,9 +2,9 @@
 title: "Fayzullo Inatilloev"
 ---
 
-Hi! I'm a graduate student at Baruch College, studying towards an MS in AI & Business Analytics, with a concentration in Operations & Decision Analytics.
+Hey! I'm a graduate student at Baruch College, persuing an MS in AI & Business Analytics, with a concentration in Operations & Decision Analytics.
 
-I previously worked as an IELTS instructor and managed an educational training center in Tashkent, Uzbekistan.
+I used to worked as manager and an IELTS instructor an educational center in Tashkent, Uzbekistan.
 
 This site hosts my work for STA 9750 (Software Tools for Data Analysis).
 
