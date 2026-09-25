@@ -1,0 +1,16 @@
+---
+title: "Fayzullo Inatilloev"
+---
+
+Hi! I'm a graduate student at Baruch College, studying towards an MS in AI & Business Analytics, with a concentration in Operations & Decision Analytics.
+
+I previously worked as an IELTS instructor and managed an educational training center in Tashkent, Uzbekistan.
+
+This site hosts my work for STA 9750 (Software Tools for Data Analysis).
+
+--------------
+```{r}
+#| include: false
+1+1
+```
+Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")`
