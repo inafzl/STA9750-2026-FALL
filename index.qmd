@@ -8,6 +8,7 @@ I used to worked as manager and an IELTS instructor an educational center in Tas
 
 This site hosts my work for STA 9750 (Software Tools for Data Analysis).
 
+
 --------------
 ```{r}
 #| include: false
