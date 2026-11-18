@@ -10,40 +10,40 @@ format:
 
 ## Introduction
 
-A suitable introduction goes here. In this mini-project, I intend to demonstrate
+In this mini-project, I intend to demonstrate
 my skills at Data Summarization/Exploratory Analysis/Table Formatting in an analysis of Media/Internet data.
 
 ## Data Acquisition and Preparation
 
 ```{r}
 #' Acquire Netflix What We Watched Reports
-#' 
+#'
 #' This function will acquire and standardize all data for MP#01
 #' from Netflix. Because Netflix hosts the data files behind a CDN, we
 #' are accessing the release pages and automatically extracting links to the
-#' relevant files (with CDN hash). 
-#' 
+#' relevant files (with CDN hash).
+#'
 #' After import, files are stacked vertically and some basic cleaning is
-#' performed. 
+#' performed.
 load_netflix_data <- function(){
   # Note to students: Make sure you have installed the tidyverse and fs packages
   #                   before beginning this assignment. If you aren't sure,
   #                   simply run `library(tidyverse)` at your R Console and, if
-  #                   you don't see an error message, `tidyverse` has been 
+  #                   you don't see an error message, `tidyverse` has been
   #                   installed. (Same for `fs`) If you still need to install
-  #                   either package, use the `install.packages` function as 
+  #                   either package, use the `install.packages` function as
   #                   demonstrated in class.
   library(tidyverse)
   library(rvest)
   library(readxl)
   library(fs)
-  
+
   data_dir <- path("data", "mp01")
-    
+
   if(!dir_exists(data_dir)){
     dir_create(data_dir, showWarnings=FALSE, recurse=TRUE)
   }
-  
+
   NETFLIX_URLS <- list(
     `2023H1` = "https://about.netflix.com/news/what-we-watched-a-netflix-engagement-report",
     `2023H2` = "https://about.netflix.com/news/what-we-watched-the-second-half-of-2023",
@@ -53,53 +53,53 @@ load_netflix_data <- function(){
     `2025H2` = "https://about.netflix.com/news/what-we-watched-the-second-half-of-2025",
     `2026H1` = "https://about.netflix.com/news/what-we-watched-the-first-half-of-2026"
   )
-  
+
   download_if_needed <- function(url, local){
     if(!file_exists(local)){
       download.file(url, local, quiet = TRUE, mode = "wb")
     }
-    
+
     return(local)
   }
-    
-  NETFLIX_URLS |> 
-    map(read_html) |> 
-    map(html_element, xpath = "//a[contains(@href, '.xlsx')]") |> 
-    map_chr(html_attr, "href") |> 
-    enframe("period", "url") |> 
-   mutate(path = path(data_dir, paste0(period, ".xlsx")), 
-          path = map2(url, path, download_if_needed), 
-          data = map(path, read_excel, skip=3, na="*"), 
+
+  NETFLIX_URLS |>
+    map(read_html) |>
+    map(html_element, xpath = "//a[contains(@href, '.xlsx')]") |>
+    map_chr(html_attr, "href") |>
+    enframe("period", "url") |>
+   mutate(path = path(data_dir, paste0(period, ".xlsx")),
+          path = map2(url, path, download_if_needed),
+          data = map(path, read_excel, skip=3, na="*"),
           data = map(data, \(x) x |> mutate(`Release Date` = as.Date(`Release Date`)))) |>
-    unnest(data) |> 
-    select(-url, -path) |> 
-    mutate(year=str_sub(period, 1, 4), 
-           half=str_sub(period, start=6), 
-           period_start = make_date(year, if_else(half==1, 1, 7), 1), 
-           period_end = make_date(year, if_else(half==1, 6, 12), if_else(half==1, 30, 31))) |> 
-    filter(!is.na(`Hours Viewed`)) |> 
-    mutate(live_event = !is.na(Runtime) & str_detect(Runtime, "\\d+:\\d+\\*"), 
+    unnest(data) |>
+    select(-url, -path) |>
+    mutate(year=str_sub(period, 1, 4),
+           half=str_sub(period, start=6),
+           period_start = make_date(year, if_else(half==1, 1, 7), 1),
+           period_end = make_date(year, if_else(half==1, 6, 12), if_else(half==1, 30, 31))) |>
+    filter(!is.na(`Hours Viewed`)) |>
+    mutate(live_event = !is.na(Runtime) & str_detect(Runtime, "\\d+:\\d+\\*"),
            clean_time = str_remove(Runtime, fixed("*")),
            Runtime = 60 * hour(hm(clean_time)) + minute(hm(clean_time))) |>
     select(-clean_time) |>
-    mutate(Runtime = coalesce(Runtime, mean(Runtime, na.rm=TRUE)), 
-           .by=Title, 
+    mutate(Runtime = coalesce(Runtime, mean(Runtime, na.rm=TRUE)),
+           .by=Title,
            Title = stringi::stri_trans_general(Title, "Latin-ASCII"),
-           Title = str_remove(Title, " // .*"), 
-           Title = str_remove(Title, "[^[:ascii:]].*"), 
+           Title = str_remove(Title, " // .*"),
+           Title = str_remove(Title, "[^[:ascii:]].*"),
            Title = str_trim(Title)) |>
     filter_out(Title == "") |>
-    select(year, 
-           period, 
-           period_start, 
-           period_end, 
-           Title, 
-           -half, 
-           Runtime, 
-           Views, 
-           `Hours Viewed`, 
+    select(year,
+           period,
+           period_start,
+           period_end,
+           Title,
+           -half,
+           Runtime,
+           Views,
+           `Hours Viewed`,
            `Release Date`,
-           `Available Globally?`, 
+           `Available Globally?`,
            live_event)
 }
 
@@ -114,7 +114,7 @@ glimpse(NETFLIX_DATA)
 
 ### Renaming columns
 ```{r}
-library(tidyverse)        
+library(tidyverse)
 NETFLIX_DATA <- NETFLIX_DATA |>
   rename(
     title = Title,
@@ -155,7 +155,7 @@ glimpse(NETFLIX_DATA)
 ```
 
 ### Description
-There are 61,892 rows and 11 columns in this set. 
+There are 61,892 rows and 11 columns in this set.
 
 - **year** [whole number]- it is a column that shows the year a counting survey was conducted
 - **period** [text] - it is a column that shows the half-year a counting survey was conducted
@@ -178,8 +178,8 @@ skimr::skim(NETFLIX_DATA)
 
 - There is not missing or blank text in the dataset. There are 7 unique periods and 24,427 unique titles. if We pay attention we can see that unique count of title is different from the row count. The reason for that is each title takes up different periods thus making similar titles appear multiple times.
 - Period columns are complete and set. Meanwhile, **release_date** is missing nearly half of rows.
-- 40171 rows aren't available globally, 21719 rows are available globally. 310 are broadcasted on live and 61582 rows aren't 
-- **runtime** is missing 13085 values, **views** is missing 18198 values. Mean numbers of 3 columns (**runtime**, **views**, **hours_viewed**) are misleading 
+- 40171 rows aren't available globally, 21719 rows are available globally. 310 are broadcasted on live and 61582 rows aren't
+- **runtime** is missing 13085 values, **views** is missing 18198 values. Mean numbers of 3 columns (**runtime**, **views**, **hours_viewed**) are misleading
 
 
 ```{r}
@@ -283,13 +283,13 @@ share_by_hours <- NETFLIX_DATA |>
 print(share_by_hours)
 ```
 
-**Answer**: 
+**Answer**:
 The fraction of the catalog globally available by title is `r scales::percent(share_by_title, accuracy = 0.01)`
 
 The fraction of the catalog globally available by title weighted by hours is `r scales::percent(share_by_hours, accuracy = 0.01)`
 
 
-## Task 6 
+## Task 6
 
 
 **Question 1** What was the top title (by total hours viewed) in each period and what fraction of total viewership did it capture?
@@ -312,7 +312,7 @@ top_by_period |>
   fmt_number(hours_viewed, suffixing = TRUE) |>
   fmt_percent(share, decimals = 2) |>
   tab_header(title = "top_by_period") |>
-  tab_source_note("ehehehehhehhehehhehehe")
+  tab_source_note("Source: Netflix What We Watched engagement reports, 2023H1–2026H1")
 ```
 **Answer** The top title (by total hours viewed) in each period is **The Night Agent: Season 1** and what fraction of total viewership was 812.1 million hours
 
@@ -337,9 +337,9 @@ catalog_by_period |>
   fmt_number(n_titles, decimals = 0) |>
   fmt_number(total_runtime, decimals = 0) |>
   tab_header(title = "catalog_by_period") |>
-  tab_source_note("...")
+  tab_source_note("Source: Netflix What We Watched engagement reports, 2023H1–2026H1")
 ```
-**Answer**: As the analysis has shown us, we can conclude that total runtime grew over time periods, while numbers of titles has been recovering after sharp dip at begining of given period 
+**Answer**: As the analysis has shown us, we can conclude that total runtime grew over time periods, while numbers of titles has been recovering after sharp dip at begining of given period
 
 
 
@@ -372,7 +372,7 @@ title_stats |>
              min_hours = "min_hours", sd_hours = "sd_hours") |>
   fmt_number(c(avg_hours, min_hours, sd_hours), suffixing = TRUE) |>
   tab_header(title = "title_stats") |>
-  tab_source_note("...")
+  tab_source_note("Source: Netflix What We Watched engagement reports, 2023H1–2026H1")
 ```
 **Answer**: These are the top titles that have had the most consistently high viewership across all periods. Also, it is worth mentioning that Stranger Things 4 has the highest average (which is 207.4M) but also an huge spread (which is 171.7M). That means it spiked in one period and was lower in the other ones. Meanwhile, Breaking Bad Season 2 has average of 91.6M and spread of only 12.0M. Money Heist Part 1 has 80.6M of avarage and 9.6M of spread. These values show that these shows are steady meaning high minimum doesn’t automatically mean steady the spread column shows which one really is.
 
@@ -396,7 +396,7 @@ show_movie_share |>
   fmt_number(hours, suffixing = TRUE) |>
   fmt_percent(share, decimals = 1) |>
   tab_header(title = "show_movie_share") |>
-  tab_source_note("...")
+  tab_source_note("Source: Netflix What We Watched engagement reports, 2023H1–2026H1")
 ```
 
 **Answer** Shows rake approximately 90.8% to 93.5% of viewing time in every period. The lowest period is 2025H1 with 90.8% and the highest is 2024H2 with 93.5%. Movies take the rest ranging from 6.5% to 9.2%. They peaked in 2025H1 at 9.2%. There is no steady upward or downward trend.
@@ -425,7 +425,7 @@ live_vs_taped |>
              median_hours = "median_hours", top_tier = "top_tier") |>
   fmt_number(c(avg_hours, median_hours, top_tier), suffixing = TRUE, decimals = 1) |>
   tab_header(title = "live_vs_taped") |>
-  tab_source_note("____")
+  tab_source_note("Source: Netflix What We Watched engagement reports, 2023H1–2026H1")
 ```
 
 
@@ -442,7 +442,6 @@ live_vs_taped |>
 
 
 
-Code related to the final deliverable of the assignment goes here. 
 ```{r}
    n_row <- nrow(NETFLIX_DATA)
 ```
@@ -471,27 +470,27 @@ shows_2026 <- show_movie_share |> ungroup() |> filter(period == "2026H1", is_sho
 ```
 
 
-MEMORANDUM    
-To: Netflix Content Strategy Leadership.  
-From: Business Analytics Team.  
-Date: October 16, 2026.  
-Subject: Improving Content Efficiency as Netflix’s Catalog Expands.  
+MEMORANDUM
+To: Netflix Content Strategy Leadership.
+From: Business Analytics Team.
+Date: October 16, 2026.
+Subject: Improving Content Efficiency as Netflix’s Catalog Expands.
 
-Intro   
+Intro
 Nowadays Netflix is facing a problem of whether the movies (titles in out case) are producing additional viewing to ensure continuous growth. This memorandum analyses `r scales::comma(n_row)` records with detailed information alongside during half-year periods (January 2023 - June 2026). Its purpose is to identify engagement patterns and suggest ways to make content decisions more evidence-driven. Since the dataset does not include any financial information, this report is going to focus on viewing behavior not the profitability
 
-Finding 1   
+Finding 1
 The first subsequent finding that was concluded during analisys is that the number of title grew quickly, while the actual engagement of audience (viewing hours) grew much slower. For example, in the first half of 2025 Netflix reported to have `r scales::comma(n_2025)` title records and `r scales::comma(n_2026)` in the first half of 2026, which is an increase of approximately `r scales::percent(n_growth, accuracy = 0.1)`. The combined runtime (viewing hours) of those listings rose `r scales::percent(rt_growth, accuracy = 0.1)`, from `r scales::comma(rt_2025, accuracy = 1)` to `r scales::comma(rt_2026, accuracy = 1)`. Management is recommended to focus on prioritizing (invest in) increasing the engagement with the catalog already available rather than expanding its number.
 
 
-Finding 2   
+Finding 2
 Another finding is that shows take up majority of total viewing hours. Shows accounted for `r scales::comma(shows_2025$hours / 1e9, accuracy = 0.01)` billion viewing hours (`r scales::percent(shows_2025$share, accuracy = 0.1)` of total hours), in the first half of 2025. By the first half of 2026, shows accounted `r scales::comma(shows_2026$hours / 1e9, accuracy = 0.01)` billion hours (`r scales::percent(shows_2026$share, accuracy = 0.1)` of total hours). This increase shows that series remain central to viewing activity. For this reason, management is suggested to pay close attention. (It is als worth mentioning that for even better suggestion financial records are needed)
 
 
-Finding 3   
+Finding 3
 Some of the titles appeared in all 7 given time periods, for example, Breaking bad: season 1, Suits: season 1, and Money Heist: season 1. This means older and well established shows tend to keep strong engagement.  It is recommended to balance promotion of new releases alongside the old one as they tend to maintain viewer's engagement
 
-Conclusion  
+Conclusion
 Netflix is not facing a decline in total viewing hours, its number of titles is growing faster than viewing hours. A strategy focusing on engagement efficiency and sustaining catalog value would help management identify where additional content investment is most likely to have actual value.
 
 
@@ -505,11 +504,10 @@ Netflix is not facing a decline in total viewing hours, its number of titles is 
 Content created has been done by the author. AI assistance was used to help with code, number checks, concept checks, and for structure discusions
 :::
 
-
 ------------------------------------------------------------------------
 
 This work ©2025 by inafzl was initially prepared as a Mini-Project for
 STA 9750 at Baruch College. More details about this course can be found at
 [the course site](https://michael-weylandt.com/STA9750) and instructions for
-this assignment can be found at 
+this assignment can be found at
 [MP #01](https://michael-weylandt.com/STA9750/mini/mini01.html)
