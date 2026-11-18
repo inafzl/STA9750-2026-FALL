@@ -1,5 +1,9 @@
 ---
 title: "Fayzullo Inatilloev"
+
+format:
+    html:
+        theme: [sketchy, navbar.scss, home-nav.scss]
 ---
 
 Hey! I'm a graduate student at Baruch College, persuing an MS in AI & Business Analytics, with a concentration in Operations & Decision Analytics.
