@@ -8,7 +8,7 @@ editor:
 format:
     html:
         code-fold: true
-        theme: lux
+        theme: [lux, navbar.scss, mp02-nav.scss]
 ---
 
 ```{=html}

@@ -1,0 +1,149 @@
+/*-- scss:defaults --*/
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap");
+
+/*-- scss:rules --*/
+
+/* =========================================================
+   Shared navbar for every mini-project page (MP02 layout)
+   Same design everywhere; each project only changes the colors.
+   Set these in the project's own .scss file, e.g.
+
+     :root {
+       --nav-bg: #000000;      // bar color
+       --nav-text: #ffffff;    // site name + link color
+       --nav-accent: #e50914;  // bottom line + hover/active color
+     }
+   ========================================================= */
+
+:root {
+  --nav-bg: #1b1b1b;
+  --nav-text: #f2f2f2;
+  --nav-accent: #ffffff;
+  --nav-font: "Nunito Sans", system-ui, sans-serif;
+}
+
+/* flat full-width bar, same size as MP02 (80px tall, one row) */
+.navbar {
+  background: var(--nav-bg) !important;
+  background-image: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  border-bottom: 3px solid var(--nav-accent) !important;
+  box-shadow: none !important;
+  box-sizing: border-box;
+  min-height: 80px;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.navbar > .container-fluid,
+.navbar > .container,
+.navbar .navbar-container {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  min-height: 77px;
+  padding-left: 1.4rem !important;
+  padding-right: 1.4rem !important;
+  max-width: none;
+}
+.navbar .navbar-brand-container {
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* site name: uppercase, wide letter spacing */
+.navbar .navbar-brand,
+.navbar .navbar-title {
+  font-family: var(--nav-font) !important;
+  font-size: 1.12rem !important;
+  font-weight: 400 !important;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--nav-text) !important;
+  margin: 0 0.9rem 0 0 !important;
+  padding: 0 !important;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+.navbar .navbar-brand:hover,
+.navbar .navbar-title:hover {
+  color: var(--nav-accent) !important;
+}
+
+/* links: one horizontal row, no bullets, same spacing on every theme */
+.navbar .navbar-nav {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin: 0 !important;
+  gap: 0 !important;
+}
+.navbar .navbar-nav .nav-item {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.navbar .nav-link .menu-text {
+  font-size: inherit !important;
+  letter-spacing: inherit !important;
+}
+.navbar .nav-link {
+  font-family: var(--nav-font) !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--nav-text) !important;
+  opacity: 0.85;
+  padding: 0.5rem 1.4rem !important;
+  white-space: nowrap;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: var(--nav-accent) !important;
+  opacity: 1;
+}
+
+/* desktop: always show the links in a row, hide the menu button */
+@media (min-width: 992px) {
+  .navbar .navbar-toggler { display: none !important; }
+  .navbar .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+    flex-grow: 1;
+    align-items: center;
+  }
+  .navbar .navbar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+  }
+}
+
+/* phones/tablets: menu button opens the links in a column */
+@media (max-width: 991.98px) {
+  .navbar > .container-fluid,
+  .navbar > .container,
+  .navbar .navbar-container { flex-wrap: wrap; }
+  .navbar .navbar-toggler {
+    margin-left: auto;
+    border: 1px solid var(--nav-text) !important;
+    border-radius: 4px !important;
+    padding: 0.35rem 0.6rem;
+  }
+  .navbar .navbar-toggler-icon { filter: invert(1); }
+  .navbar .navbar-collapse { flex-basis: 100%; }
+  .navbar .nav-link { padding: 0.6rem 0 !important; }
+}
+
+/* keep the navbar visible while you're at the top of the page;
+   it only slides away once you scroll down (same as MP01) */
+#quarto-header.headroom--top,
+.headroom.headroom--top {
+  transform: none !important;
+  top: 0 !important;
+}

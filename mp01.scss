@@ -248,3 +248,10 @@ body.intro-done #title-block-header::before {
   #intro { display: none; }
   #title-block-header::before { opacity: 1; animation: none; }
 }
+
+/* ---------- shared navbar colors for this project ---------- */
+:root {
+  --nav-bg: #000000;
+  --nav-text: #ffffff;
+  --nav-accent: #e50914;
+}

@@ -1,0 +1,101 @@
+/*-- scss:defaults --*/
+
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600&display=swap");
+
+$body-bg:    #0e0e10;
+$body-color: #e6e6e6;
+$font-family-sans-serif: "Inter", system-ui, sans-serif;
+$headings-font-family:   "Bebas Neue", "Inter", sans-serif;
+$headings-font-weight:   400;
+
+/*-- scss:rules --*/
+
+:root {
+  --nav-bg: #111114;
+  --nav-text: #f2f2f2;
+  --nav-accent: #f5b301;   /* construction yellow */
+}
+
+/* hide the normal title block; the card below replaces it */
+#title-block-header { display: none; }
+
+.coming-soon {
+  max-width: 640px;
+  margin: 12vh auto 10vh;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  background: #16161a;
+  border-radius: 16px;
+  border: 1px solid #2a2a30;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+/* moving yellow-black hazard stripe along the top */
+.coming-soon::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 10px;
+  background: repeating-linear-gradient(
+    -45deg, #f5b301 0 16px, #111114 16px 32px);
+  background-size: 200% 100%;
+  animation: stripe-move 6s linear infinite;
+}
+@keyframes stripe-move {
+  to { background-position: 100% 0; }
+}
+
+.coming-soon .cs-icon {
+  font-size: 3.5rem;
+  line-height: 1;
+  margin-bottom: 1rem;
+  display: inline-block;
+  animation: cs-bob 2.4s ease-in-out infinite;
+}
+@keyframes cs-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+.coming-soon .cs-tag {
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 0.3em;
+  color: #f5b301;
+  font-size: 1.1rem;
+}
+
+.coming-soon h1 {
+  font-size: clamp(2.4rem, 7vw, 3.6rem);
+  letter-spacing: 0.03em;
+  color: #ffffff;
+  margin: 0.3rem 0 1rem;
+  border: none;
+}
+
+.coming-soon p {
+  color: #a9a9b3;
+  font-size: 1.05rem;
+  margin-bottom: 1.8rem;
+}
+
+.coming-soon .cs-links a {
+  display: inline-block;
+  margin: 0.3rem;
+  padding: 0.6rem 1.3rem;
+  border-radius: 6px;
+  border: 1px solid #f5b301;
+  color: #f5b301;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.coming-soon .cs-links a:hover {
+  background: #f5b301;
+  color: #111114;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coming-soon::before, .coming-soon .cs-icon { animation: none; }
+}
