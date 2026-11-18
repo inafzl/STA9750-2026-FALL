@@ -6,6 +6,11 @@ editor:
 format:
     html:
         code-fold: true
+        theme: [darkly, mp01.scss]
+        include-after-body: mp01-bg.html
+resources:
+    - images/intro.mp4
+    - images/mp01-bg.mp4
 execute:
     message: false
     warning: false

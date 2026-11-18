@@ -1,0 +1,57 @@
+<video id="bg-video" autoplay muted loop playsinline aria-hidden="true">
+  <source src="images/mp01-bg.mp4" type="video/mp4">
+</video>
+<div class="bg-overlay"></div>
+
+<!-- one-time intro: visitor clicks Play, the video plays once WITH sound, then fades into the project -->
+<div id="intro">
+  <video id="intro-video" playsinline preload="auto">
+    <source src="images/intro.mp4" type="video/mp4">
+  </video>
+  <button id="intro-play" class="intro-play-hide" type="button" aria-label="Play intro">
+    <span class="intro-play-icon">&#9654;</span>
+    <span class="intro-play-text">Play</span>
+  </button>
+  <button id="intro-skip" type="button">Skip intro</button>
+</div>
+<script>
+  (function () {
+    var intro = document.getElementById("intro");
+    var vid = document.getElementById("intro-video");
+    var play = document.getElementById("intro-play");
+    var skip = document.getElementById("intro-skip");
+    if (!intro || !vid) return;
+
+    var finished = false;
+    var done = function () {
+      if (finished) return;
+      finished = true;
+      try { vid.pause(); } catch (e) {}
+      intro.classList.add("intro-hide");
+      document.body.classList.add("intro-done");
+      setTimeout(function () { if (intro.parentNode) intro.parentNode.removeChild(intro); }, 800);
+    };
+
+    // 1) try to start the logo video right away, with sound
+    vid.muted = false;
+    var first = vid.play();
+    if (first && first.catch) {
+      first.catch(function () {
+        // 2) browser blocked sound: show the Play button so one click starts it with sound
+        play.classList.remove("intro-play-hide");
+      });
+    }
+
+    play.addEventListener("click", function () {
+      vid.muted = false;
+      vid.volume = 1;
+      var p = vid.play();
+      play.classList.add("intro-play-hide");
+      if (p && p.catch) p.catch(done);          // if the browser refuses to play, just open the page
+    });
+    skip.addEventListener("click", done);
+    vid.addEventListener("ended", done);        // fade into the project when the video ends
+    var src = vid.querySelector("source");
+    if (src) src.addEventListener("error", done); // no video file -> open the page directly
+  })();
+</script>
