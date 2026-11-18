@@ -3,7 +3,7 @@
 </video>
 <div class="bg-overlay"></div>
 
-<!-- one-time intro: visitor clicks Play, the video plays once WITH sound, then fades into the project -->
+<!-- one-time intro: tries to play with sound right away; if the browser blocks it, a Play button appears -->
 <div id="intro">
   <video id="intro-video" playsinline preload="auto">
     <source src="images/intro.mp4" type="video/mp4">
@@ -32,7 +32,7 @@
       setTimeout(function () { if (intro.parentNode) intro.parentNode.removeChild(intro); }, 800);
     };
 
-    // 1) try to start the logo video right away, with sound
+    // 1) try to start the logo right away, with sound
     vid.muted = false;
     var first = vid.play();
     if (first && first.catch) {
@@ -47,10 +47,10 @@
       vid.volume = 1;
       var p = vid.play();
       play.classList.add("intro-play-hide");
-      if (p && p.catch) p.catch(done);          // if the browser refuses to play, just open the page
+      if (p && p.catch) p.catch(done);            // if it still can't play, just open the page
     });
     skip.addEventListener("click", done);
-    vid.addEventListener("ended", done);        // fade into the project when the video ends
+    vid.addEventListener("ended", done);          // fade into the project when the logo ends
     var src = vid.querySelector("source");
     if (src) src.addEventListener("error", done); // no video file -> open the page directly
   })();

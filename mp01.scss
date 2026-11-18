@@ -207,6 +207,21 @@ hr { border-color: $line; opacity: 1; }
   cursor: pointer;
 }
 #intro-skip:hover { color: #ffffff; border-color: #ffffff; }
+#intro-sound {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.75rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+  padding: 0.4rem 0.9rem;
+  color: #ffffff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+#intro-sound:hover { background: rgba(255, 255, 255, 0.25); }
+#intro-sound.intro-play-hide { opacity: 0; pointer-events: none; }
 
 /* the label that stays on the page afterwards */
 #title-block-header::before {
